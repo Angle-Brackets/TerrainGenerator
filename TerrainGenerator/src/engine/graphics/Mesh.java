@@ -13,15 +13,19 @@ import engine.utils.GraphicsPointers;
 
 public class Mesh {
 	private Vertex[] verticies;
+	private Material material;
 	private int[] indicies;
-	private int vao, vbo, ibo, cbo; //Vertex Array Obj, Vertex Buffer Obj, Indices Buffer Obj, Color Buffer Obj.
+	private int vao, vbo, ibo, cbo, tbo; //Vertex Array Obj, Vertex Buffer Obj, Indices Buffer Obj, Color Buffer Obj, Texture Buffer Obj.
 	
-	public Mesh(Vertex[] verts, int[] indic) {
+	public Mesh(Vertex[] verts, int[] indic, Material mat) {
 		verticies = verts;
 		indicies = indic;
+		material = mat;
 	}
 	
 	public void create() {
+		material.create();
+		
 		vao = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vao);
 		
@@ -49,6 +53,17 @@ public class Mesh {
 		
 		cbo = storeData(colorBuffer, GraphicsPointers.COLOR_PTR.getPointerIndex(), 3);
 		
+		FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(verticies.length * 2);
+		float[] textureData = new float[verticies.length * 2];
+		for (int i = 0; i < verticies.length; i++) {
+			textureData[i * 2] = verticies[i].getTextureCoord().getX();
+			textureData[i * 2 + 1] = verticies[i].getTextureCoord().getY();
+		}
+		textureBuffer.put(textureData).flip();
+		
+		tbo = storeData(textureBuffer, GraphicsPointers.TEXTURE_PTR.getPointerIndex(), 2);
+		
+		
 		IntBuffer indiciesBuffer = MemoryUtil.memAllocInt(indicies.length);
 		indiciesBuffer.put(indicies).flip();
 		
@@ -72,8 +87,11 @@ public class Mesh {
 		GL15.glDeleteBuffers(vbo);
 		GL15.glDeleteBuffers(ibo);
 		GL15.glDeleteBuffers(cbo);
+		GL15.glDeleteBuffers(tbo);
 		
 		GL30.glDeleteVertexArrays(vao);
+		
+		material.destroy();
 	}
 
 	public Vertex[] getVerticies() {
@@ -98,6 +116,14 @@ public class Mesh {
 	
 	public int getCBO() {
 		return cbo;
+	}
+	
+	public int getTBO() {
+		return tbo;
+	}
+	
+	public Material getMaterial() {
+		return material;
 	}
 	
 	
