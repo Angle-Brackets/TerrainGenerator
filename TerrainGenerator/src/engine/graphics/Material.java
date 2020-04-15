@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;

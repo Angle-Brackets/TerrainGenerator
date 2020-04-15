@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import engine.math.Matrix4f;
 import engine.math.Vector3f;
 
 public class Window {
@@ -20,11 +21,15 @@ public class Window {
 	private boolean isResized = false;
 	private boolean isFullscreen;
 	private int[] windowPosX = new int[1], windowPosY = new int[1];
+	private Matrix4f projection;
+	private float FOV;
 	
 	public Window(int width, int height, String title) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
+		FOV = 50.0f;
+		projection = Matrix4f.projection((float)Math.toRadians(70), (float)width / (float)height, 0.1f, FOV);
 	}
 	
 	public void create() {
@@ -110,7 +115,10 @@ public class Window {
 		} else {
 			GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
 		}
-		
+	}
+	
+	public void mouseState(boolean lock) {
+		GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, lock ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
 	}
 
 	public int getWidth() {
@@ -127,6 +135,10 @@ public class Window {
 
 	public long getWindow() {
 		return window;
+	}
+	
+	public Matrix4f getProjectionMatrix() {
+		return projection;
 	}
 
 	public void swapBuffers() {

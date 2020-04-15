@@ -6,11 +6,17 @@ import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
+import engine.graphics.Textures;
+import engine.graphics.EnumTexture;
 import engine.graphics.Vertex;
 import engine.io.Input;
 import engine.io.Window;
 import engine.math.Vector3f;
-import engine.objects.GameObject;
+import engine.objects.Camera;
+import engine.objects.Block;
+import engine.objects.Model;
+import engine.objects.Player;
+import engine.terrain.Chunk;
 import engine.math.Vector2f;
 
 public class Main implements Runnable {
@@ -19,19 +25,17 @@ public class Main implements Runnable {
 	public Renderer renderer;
 	public Shader shader;
 	public static final int WIDTH = 1280, HEIGHT = 760;
+	public Camera camera = new Camera(new Vector3f(7.5f,70,7.5f), new Vector3f(0,0,0));
+	public Player player = new Player(camera);
 	
-	public Mesh mesh = new Mesh(new Vertex[] {
-			new Vertex(new Vector3f(-0.5f, 0.5f, 0.0f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(0.0f,0.0f)),
-			new Vertex(new Vector3f(0.5f, 0.5f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f,1.0f)),
-			new Vertex(new Vector3f(0.5f, -0.5f, 0.0f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(1.0f,1.0f)),
-			new Vertex(new Vector3f(-0.5f, -0.5f, 0.0f), new Vector3f(0.5f, 0.5f, 0.5f), new Vector2f(1.0f,0.0f)),
-			
-	}, new int[] {
-		0, 1, 2,
-		0, 3, 2,
-	}, new Material("/textures/discordpicWinter.png"));
+	Chunk chungus = new Chunk(new Vector3f(0,0,0));
+	Chunk chungus2 = new Chunk(new Vector3f(16, 0, 0));
+//	Chunk chungus3 = new Chunk(new Vector3f(32, 0, 0));
+//	Chunk chungus4 = new Chunk(new Vector3f(48, 0, 0));
+//	Chunk chungus5 = new Chunk(new Vector3f(64, 0, 0));
+//	Chunk chungus6 = new Chunk(new Vector3f(76, 0, 0));
 	
-	public GameObject object = new GameObject(mesh, new Vector3f(0,0,0), new Vector3f(0,0,0), new Vector3f(1,1,1));
+	Chunk[] chunks = {chungus, chungus2};
 	
 	public void start() {
 		game = new Thread(this, "game");
@@ -41,10 +45,13 @@ public class Main implements Runnable {
 	public void init() {
 		window = new Window(WIDTH, HEIGHT, "Game");
 		shader = new Shader("/shaders/mainVertex.glsl","/shaders/mainFragment.glsl");
-		renderer = new Renderer(shader);
-		window.setBackgroundColor((float)Math.random(), (float)Math.random(), (float)Math.random());
+		renderer = new Renderer(window, shader);
+		window.setBackgroundColor(0.6f, 0.8f, 1.0f);
 		window.create();
-		mesh.create();
+
+		for(Chunk c : chunks)
+			c.generateChunk();
+		
 		shader.create();
 	}
 	
@@ -55,29 +62,32 @@ public class Main implements Runnable {
 			render();
 			if(Input.isKeyDown(GLFW.GLFW_KEY_F11))
 				window.setFullscreen(!window.isFullscreen());
+			if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT))
+				window.mouseState(true);
 		} 
 		close();
 	}
 	
 	private void update() {
 		window.update();
-		object.update();
-		if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT))
-			System.out.println("X: " + Input.getScrollX() + ", Y: " + Input.getScrollY());
+		camera.update();
 	}
 	
 	private void render() {
-		renderer.renderMesh(object);
+		for(Chunk c : chunks)
+			c.renderChunk(renderer, camera);
+		
 		window.swapBuffers();
 	}
 	
 	private void close() {
-		window.destroy();
-		mesh.destroy();
+		for(Chunk c : chunks)
+			c.destroy();
 		shader.destroy();
 	}
 	
 	public static void main(String[] args) {
+		Textures.loadTextures();
 		new Main().start();
 	}
 }
