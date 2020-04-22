@@ -9,10 +9,7 @@ import engine.math.Vector2f;
 import engine.math.Vector3f;
 
 public class Block extends Model{
-	private String name;
-	private Vector3f position;
-	private Vector3f rotation;
-	private boolean toRender;
+	private Vector3f[] normals;
 	private static final int[] indices = new int[] {
 			//Back face
 			0, 1, 3,	
@@ -40,11 +37,8 @@ public class Block extends Model{
 	};
 	
 	public Block(Vector3f position, Vector3f rotation, Vector3f scale, EnumTexture m) {
-		super(position, rotation, scale, getBlockModel(Textures.get(m), m.getNumTextures()));
-		name = m.name();
-		this.position = position;
-		this.rotation = rotation;
-		toRender = false;
+		super(position, rotation, scale, getBlockModel(Textures.get(m), m.getNumTextures()), m.name());
+		normals = calculateNormals();
 	}
 	
 	private static Mesh getBlockModel(Material m, int textureNum) {
@@ -132,27 +126,22 @@ public class Block extends Model{
 		
 	}
 	
-	public String getBlockName() {
-		return name;
+	private Vector3f[] calculateNormals() {
+		Vertex[] verts = this.getMesh().getVerticies();
+		Vector3f[] normals = new Vector3f[6];
+		normals[0] = Vector3f.cross(verts[1].getPosition(), verts[2].getPosition());
+		normals[1] = Vector3f.cross(verts[5].getPosition(), verts[6].getPosition());
+		normals[2] = Vector3f.cross(verts[9].getPosition(), verts[10].getPosition());
+		normals[3] = Vector3f.cross(verts[13].getPosition(), verts[14].getPosition());
+		normals[4] = Vector3f.cross(verts[17].getPosition(), verts[18].getPosition());
+		normals[5] = Vector3f.cross(verts[21].getPosition(), verts[22].getPosition());
+
+		return normals;
 	}
 	
-	public float getX() {
-		return position.getX();
+	public Vector3f[] getNormals() {
+		return normals;
 	}
 	
-	public float getY() {
-		return position.getY();
-	}
 	
-	public float getZ() {
-		return position.getZ();
-	}
-	
-	public void setRender(boolean b) {
-		toRender = b;
-	}
-	
-	public boolean getRender() {
-		return toRender;
-	}
 }

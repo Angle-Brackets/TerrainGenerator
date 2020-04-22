@@ -1,5 +1,10 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.lwjgl.glfw.GLFW;
 
 import engine.graphics.Material;
@@ -17,6 +22,7 @@ import engine.objects.Block;
 import engine.objects.Model;
 import engine.objects.Player;
 import engine.terrain.Chunk;
+import engine.terrain.World;
 import engine.math.Vector2f;
 
 public class Main implements Runnable {
@@ -24,18 +30,22 @@ public class Main implements Runnable {
 	public static Window window;
 	public Renderer renderer;
 	public Shader shader;
+	public static World world;
 	public static final int WIDTH = 1280, HEIGHT = 760;
-	public Camera camera = new Camera(new Vector3f(7.5f,70,7.5f), new Vector3f(0,0,0));
+	public Camera camera = new Camera(new Vector3f(7.5f,65,7.5f), new Vector3f(0,0,0));
 	public Player player = new Player(camera);
+	public static long start;
+	public static boolean startedRender = false;
 	
 	Chunk chungus = new Chunk(new Vector3f(0,0,0));
 	Chunk chungus2 = new Chunk(new Vector3f(16, 0, 0));
-//	Chunk chungus3 = new Chunk(new Vector3f(32, 0, 0));
-//	Chunk chungus4 = new Chunk(new Vector3f(48, 0, 0));
-//	Chunk chungus5 = new Chunk(new Vector3f(64, 0, 0));
-//	Chunk chungus6 = new Chunk(new Vector3f(76, 0, 0));
+	Chunk chungus3 = new Chunk(new Vector3f(0, 0, 16));
+	Chunk chungus4 = new Chunk(new Vector3f(0, 0, 32));
+	Chunk chungus5 = new Chunk(new Vector3f(64, 0, 0));
+	Chunk chungus6 = new Chunk(new Vector3f(76, 0, 0));
 	
-	Chunk[] chunks = {chungus, chungus2};
+	List<Chunk> chunks = new ArrayList<>();
+	
 	
 	public void start() {
 		game = new Thread(this, "game");
@@ -48,15 +58,15 @@ public class Main implements Runnable {
 		renderer = new Renderer(window, shader);
 		window.setBackgroundColor(0.6f, 0.8f, 1.0f);
 		window.create();
-
-		for(Chunk c : chunks)
-			c.generateChunk();
+		chunks.add(chungus);
 		
+		world = new World(renderer, chunks);
 		shader.create();
 	}
 	
 	public void run() {
 		init();
+		System.out.println("Elapsed Time: " + (System.currentTimeMillis() - start) / 1000 + "s");
 		while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
 			update();
 			render();
@@ -71,23 +81,21 @@ public class Main implements Runnable {
 	private void update() {
 		window.update();
 		camera.update();
+		world.render();
 	}
 	
 	private void render() {
-		for(Chunk c : chunks)
-			c.renderChunk(renderer, camera);
-		
 		window.swapBuffers();
 	}
 	
 	private void close() {
-		for(Chunk c : chunks)
-			c.destroy();
 		shader.destroy();
+		world.destroy();
 	}
 	
 	public static void main(String[] args) {
 		Textures.loadTextures();
 		new Main().start();
+		start = System.currentTimeMillis();
 	}
 }

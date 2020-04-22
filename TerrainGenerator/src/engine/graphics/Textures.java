@@ -2,9 +2,10 @@ package engine.graphics;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Textures {
-	public static HashMap<EnumTexture, Material> textureMap = new HashMap<EnumTexture, Material>();
+	public static Map<EnumTexture, Material> textureMap = new HashMap<EnumTexture, Material>();
 	
 	public static Material get(EnumTexture e) {
 		return textureMap.get(e);

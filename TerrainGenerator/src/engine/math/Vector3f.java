@@ -108,4 +108,12 @@ public class Vector3f {
 	public void setZ(float z) {
 		this.z = z;
 	}
+	
+	public String getLargestComponent() {
+		if(x > y && x > z)
+			return "X";
+		else if(y > x && y > z)
+			return "Y";
+		return "Z";
+	}
 }
