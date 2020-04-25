@@ -4,19 +4,22 @@ import engine.math.Vector3f;
 
 public class Player {
 	private static float FOV = 50.0f;
-	public static Vector3f playerPos;
-	public static Vector3f lastPlayerPos;
-	public static Camera camera;
+	private static Vector3f playerPos;
+	private static Vector3f playerRot;
+	private static Camera camera;
 	
 	public Player(Camera c) {
 		camera = c;
 		playerPos = c.getPosition();
-		lastPlayerPos = Vector3f.subtract(playerPos, new Vector3f(0.001f, 0, 0)); //This makes sure they're different so the game renders when it loads for the first time
+		playerRot = c.getRotation();
 	}
 	
 	public static void setPosition(Vector3f pos) {
-		lastPlayerPos = playerPos;
 		playerPos = pos;
+	}
+	
+	public static void setRotation(Vector3f rot) {
+		playerRot = rot;
 	}
 	
 	public static void setCamera(Camera c) {
@@ -35,8 +38,8 @@ public class Player {
 		return camera;
 	}
 	
-	public static Vector3f getLastPlayerPos() {
-		return lastPlayerPos;
+	public static Vector3f getRotation() {
+		return playerRot;
 	}
 
 }

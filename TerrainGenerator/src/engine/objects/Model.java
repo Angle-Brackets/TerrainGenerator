@@ -17,7 +17,7 @@ public class Model {
 		this.scale = scale;
 		this.mesh = mesh;
 		this.name = name;
-		toRender = false;
+		toRender = true;
 	}
 	
 	public void update() {

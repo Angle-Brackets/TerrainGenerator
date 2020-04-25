@@ -25,6 +25,8 @@ public class Renderer{
 	private Window window;
 	private Map<String, List<Model>> batchMap = new HashMap<>();
 	private Map<String, Mesh> meshCache = new HashMap<>();
+	private long start;
+
 	
 	public Renderer(Window w, Shader s) {
 		window = w;
@@ -32,6 +34,7 @@ public class Renderer{
 	}
 	
 	public void render() {
+		start = System.currentTimeMillis();
 		for(String blockID : batchMap.keySet()) {
 			Mesh baseMesh = meshCache.get(blockID);
 			if(baseMesh == null)
@@ -63,6 +66,7 @@ public class Renderer{
 	
 	public void updateBatch(Model b) {
 		String blockName = b.getModelName();
+		
 		if(b.getToRender()) {
 			if(batchMap.get(blockName) != null && !batchMap.get(blockName).contains(b)) {
 				batchMap.get(blockName).add(b);
@@ -70,7 +74,6 @@ public class Renderer{
 			else {
 				batchMap.put(blockName, new ArrayList<Model>());
 				batchMap.get(blockName).add(b);
-				meshCache.put(blockName, b.getMesh());
 			}
 		}
 		else if(batchMap.get(blockName) != null){
@@ -79,6 +82,18 @@ public class Renderer{
 		
 		if(batchMap.get(blockName).size() == 0)
 			meshCache.remove(blockName);
-	}	
+	}
+	
+	public void updateMeshCache(Model m) {
+		meshCache.put(m.getModelName(), m.getMesh());
+	}
+	
+	public boolean meshExists(String blockID) {
+		if(meshCache.containsKey(blockID))
+			return true;
+		return false;
+	}
+	
+	
 }
 

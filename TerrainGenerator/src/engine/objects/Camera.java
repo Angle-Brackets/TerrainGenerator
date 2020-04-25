@@ -45,6 +45,7 @@ public class Camera {
 		oldMouseY = newMouseY;
 		
 		Player.setPosition(position);
+		Player.setRotation(rotation);
 		Player.setCamera(this);
 	}
 	

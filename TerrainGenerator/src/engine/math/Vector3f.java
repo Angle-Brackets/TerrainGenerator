@@ -67,6 +67,10 @@ public class Vector3f {
 		result = prime * result + Float.floatToIntBits(z);
 		return result;
 	}
+	
+	public String toString() {
+		return getX() + ", " + getY() + ", " + getZ();
+	}
 
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -14,7 +14,6 @@ import main.Main;
 public class World{
 	private List<Chunk> terrain;
 	private Renderer renderer;
-	private Thread worldGen;
 	boolean hasCached = false;
 	public World(Renderer r) {
 		terrain = new ArrayList<>();

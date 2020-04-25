@@ -59,14 +59,19 @@ public class Main implements Runnable {
 		window.setBackgroundColor(0.6f, 0.8f, 1.0f);
 		window.create();
 		chunks.add(chungus);
-		
+		chunks.add(chungus2);
+//		chunks.add(chungus3);
+//		chunks.add(chungus4);
+//		chunks.add(chungus5);
+//		chunks.add(chungus6);
+//		
 		world = new World(renderer, chunks);
 		shader.create();
 	}
 	
 	public void run() {
 		init();
-		System.out.println("Elapsed Time: " + (System.currentTimeMillis() - start) / 1000 + "s");
+		System.out.println("Elapsed Time: " + (System.currentTimeMillis() - start) + "ms");
 		while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
 			update();
 			render();
