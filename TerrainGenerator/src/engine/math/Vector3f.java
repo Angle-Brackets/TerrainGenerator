@@ -50,6 +50,10 @@ public class Vector3f {
 		return (v1.getX() * v2.getX()) + (v1.getY() * v2.getY()) + (v1.getZ() * v2.getZ());
 	}
 	
+	public static float getDistance(Vector3f A, Vector3f B) {
+		return (float)Math.sqrt(Math.pow(A.getX() - B.getX(), 2) + Math.pow(A.getY() - B.getY(), 2) + Math.pow(A.getZ() - B.getZ(), 2));
+	}
+	
 	public static Vector3f cross(Vector3f v1, Vector3f v2) {
 		Vector3f result = new Vector3f();
 		result.x = v1.y * v2.z - v2.y * v1.z;

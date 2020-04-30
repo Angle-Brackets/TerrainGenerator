@@ -35,6 +35,8 @@ public class Camera {
 			position = Vector3f.add(position, new Vector3f(0, moveSpeed, 0));
 		if(Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) 
 			position = Vector3f.add(position, new Vector3f(0, -moveSpeed, 0));
+		if(Input.isKeyDown(GLFW.GLFW_KEY_F3))
+			System.out.println(position);
 	
 		float dx = (float)(newMouseX - oldMouseX);
 		float dy = (float)(newMouseY - oldMouseY);

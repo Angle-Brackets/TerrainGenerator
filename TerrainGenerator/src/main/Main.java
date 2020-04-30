@@ -60,11 +60,10 @@ public class Main implements Runnable {
 		window.create();
 		chunks.add(chungus);
 		chunks.add(chungus2);
-//		chunks.add(chungus3);
-//		chunks.add(chungus4);
-//		chunks.add(chungus5);
-//		chunks.add(chungus6);
-//		
+		chunks.add(chungus3);
+		chunks.add(chungus4);
+		chunks.add(chungus5);
+		chunks.add(chungus6);		
 		world = new World(renderer, chunks);
 		shader.create();
 	}
@@ -86,10 +85,11 @@ public class Main implements Runnable {
 	private void update() {
 		window.update();
 		camera.update();
-		world.render();
+		
 	}
 	
 	private void render() {
+		world.render();
 		window.swapBuffers();
 	}
 	

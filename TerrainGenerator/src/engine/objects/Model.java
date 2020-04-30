@@ -56,9 +56,6 @@ public class Model {
 		return position.getZ();
 	}
 	
-	public float getDistance(Vector3f playerPos) {
-		return (float)Math.sqrt(Math.pow(this.getPosition().getX() - playerPos.getX(), 2) + Math.pow(this.getPosition().getY() - playerPos.getY(), 2) + Math.pow(this.getPosition().getZ() - playerPos.getZ(), 2));
-	}
 	
 	public Material getMaterial() {
 		return mesh.getMaterial();

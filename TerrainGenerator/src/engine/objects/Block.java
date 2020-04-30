@@ -1,5 +1,7 @@
 package engine.objects;
 
+import org.lwjgl.opengl.GL13;
+
 import engine.graphics.EnumTexture;
 import engine.graphics.Material;
 import engine.graphics.Mesh;
@@ -38,11 +40,9 @@ public class Block extends Model{
 	
 	public Block(Vector3f position, Vector3f rotation, Vector3f scale, EnumTexture m) {
 		super(position, rotation, scale, getBlockModel(Textures.get(m), m.getNumTextures()), m.name());
-		normals = calculateNormals();
 	}
 	
 	private static Mesh getBlockModel(Material m, int textureNum) {
-		
 		switch (textureNum) {
 			case 3:
 				return new Mesh(new Vertex[] {
@@ -72,15 +72,15 @@ public class Block extends Model{
 						
 						//Top face
 						new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.5f)),
-						new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.5f, 0.5f)),
-						new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
-						new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.5f, 1.0f)),
+						new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+						new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.5f, 1.0f)),
+						new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.5f, 0.5f)),
 						
 						//Bottom face
 						new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.5f, 0.0f)),
-						new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.5f, 0.5f)),
+						new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 0.5f)),
 						new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 0.5f)),
-						new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+						new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
 					}, indices, m);
 			default:
 				return new Mesh(new Vertex[] {

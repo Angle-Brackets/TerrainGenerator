@@ -14,14 +14,14 @@ import main.Main;
 public class World{
 	private List<Chunk> terrain;
 	private Renderer renderer;
-	boolean hasCached = false;
+	
 	public World(Renderer r) {
 		terrain = new ArrayList<>();
 		renderer = r;
 	}
 	
 	public World(Renderer r, List<Chunk> initialChunks) {
-		terrain = (ArrayList<Chunk>)initialChunks;
+		terrain = initialChunks;
 		renderer = r;
 		
 		for(Chunk c : terrain)
@@ -29,9 +29,7 @@ public class World{
 	}
 	
 	public void render() {
-		for(int i = 0; i < terrain.size(); i++) {
-			terrain.get(i).renderChunk(renderer, i);
-		}
+		renderer.renderChunks(terrain);
 	}
 
 	public void destroy() {

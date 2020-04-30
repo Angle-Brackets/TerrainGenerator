@@ -3,7 +3,8 @@ package engine.graphics;
 public enum EnumTexture {
 	UNDEFINED ("/textures/errorTexture.png", 1),
 	GRASS_BLOCK ("/textures/grassblock.png", 3),
-	STONE ("/textures/stone.png", 1);
+	STONE_BLOCK ("/textures/stone.png", 1),
+	DIRT("/textures/dirt.png", 1);
 	
 	
 	
