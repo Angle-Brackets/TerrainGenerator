@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 import engine.graphics.EnumTexture;
 import engine.graphics.Renderer;
+import engine.math.OpenSimplexNoise;
 import engine.math.Vector3f;
 import engine.objects.Block;
 import engine.objects.BlockType;
@@ -16,29 +17,38 @@ import engine.objects.Player;
 import main.Main;
 
 public class Chunk {
-	public static final float seaLevel = 60.0f;
+	public static final float maxHeight = 127.0f;
+	private static OpenSimplexNoise simplex = new OpenSimplexNoise((long)(Math.random() * Long.MAX_VALUE));
 	private BlockType[][][] chunkTerrain;
-	private boolean[][][] chunkCull;
+	private Vector3f[][][] positions;
+	private boolean[][][] chunkCull; //N, E, S, W order.
+	private int lowestPoint;
 	private List<BlockType> blocksInChunk; //List of all of the blocks in a chunk for batch rendering.
 	private Vector3f startingPos;
-	private boolean active;
+	private boolean loaded;
 	
 	public Chunk(Vector3f sP) {
 		if(chunkTerrain == null) {
 			chunkTerrain = new BlockType[16][16][128];
+			positions = new Vector3f[16][16][128];
 			chunkCull = new boolean[16][16][128];
 			startingPos = sP;
 			blocksInChunk = new ArrayList<>();
-			active = true;
+			lowestPoint = 127;
+			loaded = Vector3f.getDistance(this.getStartingPos(), Player.getPosition()) >= Player.getFOV();
 		}
 	}
-	
+	//0.007 is default
 	public void generateChunk(Renderer renderer) {
 		for(int x = 0; x < chunkTerrain.length; x++) {
 			for(int z = 0; z < chunkTerrain[x].length; z++) {
 				for(int y = 0; y < chunkTerrain[x][z].length; y++) {
-					if (y < seaLevel) {
-						chunkTerrain[x][z][y] = y == 59 ? BlockType.GRASS_BLOCK : y > 56 ? BlockType.DIRT : BlockType.STONE_BLOCK;
+					if (y < maxHeight) {
+						chunkTerrain[x][z][y] = BlockType.GRASS_BLOCK;
+						
+						if(chunkTerrain[x][z][y] != null) {
+							positions[x][z][y] = new Vector3f(startingPos.getX() + x, Math.round(sumOctives(16, startingPos.getX() + x, startingPos.getZ() + z, 0.5f, 0.007f, 0, 1) * (startingPos.getY() + y)), startingPos.getZ() + z);
+						}
 						
 						if(chunkTerrain[x][z][y] != null && !blocksInChunk.contains(chunkTerrain[x][z][y])) {
 							blocksInChunk.add(chunkTerrain[x][z][y]);
@@ -51,10 +61,39 @@ public class Chunk {
 		for(int x = 0; x < chunkCull.length; x++) {
 			for(int z = 0; z < chunkCull[x].length; z++) {
 				for(int y = 0; y < chunkCull[x][z].length; y++) {
-					chunkCull[x][z][y] = surrounded(x,z,y);
+					if(y < 127 && chunkTerrain[x][z][y] != null && y < lowestPoint && positions[x][z][y + 1] == null) {
+						lowestPoint = y < lowestPoint ? y : lowestPoint;
+					}
+
+					if(y < lowestPoint) {
+						chunkCull[x][z][y] = true;
+					}
 				}
 			}
 		}
+	}
+	
+	private float sumOctives(int iterations, float x, float z, float persistence, float scale, int low, int high) {
+		float maxAmp = 0.0f;
+		float amp = 1;
+		float freq = scale;
+		float noise = 0.0f;
+		
+		for(int i = 0; i < iterations; i++) {
+			noise += simplex.eval(x * freq, z * freq) * amp;
+			maxAmp += amp;
+			amp *= persistence;
+			freq *= 2;
+		}
+		
+		noise /= maxAmp;
+		noise = noise * (high - low) / 2.0f + (high + low) / 2.0f;
+		
+		return noise;
+	}
+	
+	public void setLoaded(boolean l) {
+		loaded = l;
 	}
 
 	public void destroy() {
@@ -71,6 +110,10 @@ public class Chunk {
 	
 	public BlockType get(int x, int z, int y) {
 		return chunkTerrain[x][z][y];
+	}
+	
+	public boolean getLoaded() {
+		return loaded;
 	}
 	
 	public List<BlockType> getBlockTypesInChunk(){
@@ -91,7 +134,7 @@ public class Chunk {
 	}
 	
 	public Vector3f posFromIndex(int x, int z, int y) {
-		return new Vector3f(startingPos.getX() + x, (startingPos.getY() + y), startingPos.getZ() + z);
+		return positions[x][z][y];
 	}
 	
 	public boolean surrounded(int x, int z, int y) {
@@ -104,12 +147,12 @@ public class Chunk {
 		return chunkCull[x][z][y];
 	}
 	
-	private boolean isVisible(Vector3f blockPos) {
-		Vector3f diffVector = Vector3f.subtract(blockPos, Player.getPosition());
-		
-		return diffVector.getX() > 0 && diffVector.getZ() > 0;
+	public boolean isBlockVisible(Vector3f blockPos) {
+		//1.22173 and 0.34202059099
+		double angle = (double)Vector3f.dot(blockPos, Player.getRotation()) / (Vector3f.magnitude(blockPos) * Vector3f.magnitude(Player.getRotation()));
+		//System.out.println(angle);
+		return !(angle > 0.34202059099);
 	}
-
 	
 	public boolean equals(Object obj) {
 		if (this == obj)

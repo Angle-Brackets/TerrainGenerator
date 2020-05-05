@@ -42,6 +42,12 @@ public class Camera {
 		float dy = (float)(newMouseY - oldMouseY);
 		
 		rotation = Vector3f.add(rotation, new Vector3f(-dy * mouseSensitivity, -dx * mouseSensitivity, 0));
+		rotation = new Vector3f(rotation.getX()%6.283185307179586f, rotation.getY()%6.283185307179586f, rotation.getZ()%6.283185307179586f);
+		
+		if(rotation.getX() > Math.PI/2)
+			rotation.setX((float)(Math.PI/2));
+		if(rotation.getX() < -Math.PI/2)
+			rotation.setX((float)(-Math.PI/2));
 		
 		oldMouseX = newMouseX;
 		oldMouseY = newMouseY;

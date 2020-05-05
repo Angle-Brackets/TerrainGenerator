@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 import engine.math.Matrix4f;
 import engine.math.Vector3f;
+import engine.objects.Player;
 
 public class Window {
 	private int width, height;
@@ -28,7 +29,7 @@ public class Window {
 		this.width = width;
 		this.height = height;
 		this.title = title;
-		FOV = 50.0f;
+		FOV = Player.getFOV();
 		projection = Matrix4f.projection((float)Math.toRadians(70), (float)width / (float)height, 0.1f, FOV);
 	}
 	
@@ -54,6 +55,7 @@ public class Window {
 		GLFW.glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthFunc(GL11.GL_LESS);
 		
 		createCallbacks();
 		

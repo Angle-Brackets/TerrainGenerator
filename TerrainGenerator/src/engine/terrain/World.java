@@ -9,11 +9,12 @@ import org.lwjgl.opengl.GL11;
 
 import engine.graphics.Renderer;
 import engine.io.Input;
+import engine.math.OpenSimplexNoise;
 import main.Main;
 
 public class World{
 	private List<Chunk> terrain;
-	private Renderer renderer;
+	private Renderer renderer;;
 	
 	public World(Renderer r) {
 		terrain = new ArrayList<>();
@@ -23,7 +24,7 @@ public class World{
 	public World(Renderer r, List<Chunk> initialChunks) {
 		terrain = initialChunks;
 		renderer = r;
-		
+
 		for(Chunk c : terrain)
 			c.generateChunk(renderer);
 	}

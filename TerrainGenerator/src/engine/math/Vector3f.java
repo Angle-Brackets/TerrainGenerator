@@ -54,6 +54,22 @@ public class Vector3f {
 		return (float)Math.sqrt(Math.pow(A.getX() - B.getX(), 2) + Math.pow(A.getY() - B.getY(), 2) + Math.pow(A.getZ() - B.getZ(), 2));
 	}
 	
+	public String getLargestComponent() {
+		Vector3f temp = normalization(this);
+		float x = Math.abs(temp.x);
+		float y = Math.abs(temp.y);
+		float z = Math.abs(temp.z);
+		
+		if(x == 0 && y == 0 && z == 0)
+			return "NONE";
+		
+		if(x > y && x > z)
+			return this.x > 0 ? "+X" : "-X";
+		else if(y > x && y > z)
+			return this.y > 0 ? "+Y" : "-Y";
+		return this.z > 0 ? "+Z" : "-Z";
+	}
+	
 	public static Vector3f cross(Vector3f v1, Vector3f v2) {
 		Vector3f result = new Vector3f();
 		result.x = v1.y * v2.z - v2.y * v1.z;
@@ -116,12 +132,5 @@ public class Vector3f {
 	public void setZ(float z) {
 		this.z = z;
 	}
-	
-	public String getLargestComponent() {
-		if(x > y && x > z)
-			return "X";
-		else if(y > x && y > z)
-			return "Y";
-		return "Z";
-	}
+
 }

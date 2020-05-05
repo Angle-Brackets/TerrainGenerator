@@ -38,6 +38,18 @@ public class Renderer{
 			Mesh baseMesh;
 			String blockID;
 			for(BlockType b : blocksInChunk) {
+				
+				if(Vector3f.getDistance(chunk.getStartingPos(), Player.getPosition()) >= Player.getFOV()) {
+					chunk.setLoaded(false);
+					break;
+				}
+				else {
+					chunk.setLoaded(true);
+				}
+				
+				if(!chunk.getLoaded())
+					break;
+				
 				baseMesh = b.getBlockMesh();
 				blockID = b.getBlockID();
 				GL30.glBindVertexArray(baseMesh.getVAO());
@@ -48,13 +60,14 @@ public class Renderer{
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL13.glBindTexture(GL11.GL_TEXTURE_2D, baseMesh.getMaterial().getTextureID());	
 				shader.bind();
-	
+				//System.out.println(Player.getRotation());
+				System.out.println(Player.getPosition());
 				for(int x = 0; x < 16; x++) {
 					for(int z = 0; z < 16; z++) {
 						for(int y = 0; y < 128; y++) {
 							BlockType currentBlockType = chunk.get(x, z, y);
 							Vector3f pos = chunk.posFromIndex(x, z, y);
-							if(currentBlockType != null && !chunk.cullBlock(x, z, y) && currentBlockType.getBlockID().equals(blockID) && Vector3f.getDistance(pos, Player.getPosition()) <= 50.0f) {
+							if(currentBlockType != null && !chunk.cullBlock(x, z, y) && currentBlockType.getBlockID().equals(blockID) && Vector3f.getDistance(pos, Player.getPosition()) <= Player.getFOV()) {
 								shader.setUniform("model", Matrix4f.transform(pos, currentBlockType.getBlock().getRotation(), new Vector3f(1,1,1)));
 								shader.setUniform("projection", window.getProjectionMatrix());
 								shader.setUniform("view", Matrix4f.view(Player.getCamera().getPosition(), Player.getCamera().getRotation()));

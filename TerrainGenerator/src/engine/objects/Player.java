@@ -3,7 +3,7 @@ package engine.objects;
 import engine.math.Vector3f;
 
 public class Player {
-	private static float FOV = 50.0f;
+	private static float FOV = 128.0f;
 	private static Vector3f playerPos;
 	private static Vector3f playerRot;
 	private static Camera camera;
@@ -41,5 +41,8 @@ public class Player {
 	public static Vector3f getRotation() {
 		return playerRot;
 	}
-
+	
+	public static String getDirection() {
+		return playerRot.getLargestComponent();
+	}
 }

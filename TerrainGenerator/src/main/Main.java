@@ -32,17 +32,10 @@ public class Main implements Runnable {
 	public Shader shader;
 	public static World world;
 	public static final int WIDTH = 1280, HEIGHT = 760;
-	public Camera camera = new Camera(new Vector3f(7.5f,65,7.5f), new Vector3f(0,0,0));
+	public Camera camera = new Camera(new Vector3f(5f,80.5f,5f), new Vector3f(0,0,0));
 	public Player player = new Player(camera);
 	public static long start;
 	public static boolean startedRender = false;
-	
-	Chunk chungus = new Chunk(new Vector3f(0,0,0));
-	Chunk chungus2 = new Chunk(new Vector3f(16, 0, 0));
-	Chunk chungus3 = new Chunk(new Vector3f(0, 0, 16));
-	Chunk chungus4 = new Chunk(new Vector3f(0, 0, 32));
-	Chunk chungus5 = new Chunk(new Vector3f(64, 0, 0));
-	Chunk chungus6 = new Chunk(new Vector3f(76, 0, 0));
 	
 	List<Chunk> chunks = new ArrayList<>();
 	
@@ -57,13 +50,14 @@ public class Main implements Runnable {
 		shader = new Shader("/shaders/mainVertex.glsl","/shaders/mainFragment.glsl");
 		renderer = new Renderer(window, shader);
 		window.setBackgroundColor(0.6f, 0.8f, 1.0f);
-		window.create();
-		chunks.add(chungus);
-		chunks.add(chungus2);
-		chunks.add(chungus3);
-		chunks.add(chungus4);
-		chunks.add(chungus5);
-		chunks.add(chungus6);		
+		window.create();	
+		
+		for(int x = 0; x < 16; x+=16) {
+			for(int z = 0; z < 16; z+=16) {
+				chunks.add(new Chunk(new Vector3f(x, 0.0f, z)));
+			}
+		}
+		
 		world = new World(renderer, chunks);
 		shader.create();
 	}
@@ -72,6 +66,7 @@ public class Main implements Runnable {
 		init();
 		System.out.println("Elapsed Time: " + (System.currentTimeMillis() - start) + "ms");
 		while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+			//System.out.println(Player.getRotation() + ", " + Player.getDirection());
 			update();
 			render();
 			if(Input.isKeyDown(GLFW.GLFW_KEY_F11))
